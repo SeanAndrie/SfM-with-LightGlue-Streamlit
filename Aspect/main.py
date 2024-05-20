@@ -9,9 +9,6 @@ import firebase_admin
 from firebase_admin import credentials, auth
 from utils.sfm_pipeline import PipelineManager
 
-config = {'creds_path':'./.streamlit/aspect-45d70-firebase-adminsdk-5d8i0-2a553be297.json',
-          'options':{'storageBucket' : 'aspect-45d70.appspot.com'}}
-
 feat_map = {'LightGlue+Aliked':'aliked',
             'LightGlue+SuperPoint':'superpoint',
             'LightGlue+DoGHardNet':'doghardnet',
