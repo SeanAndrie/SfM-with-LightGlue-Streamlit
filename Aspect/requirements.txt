@@ -1,7 +1,6 @@
 fastprogress==1.0.3
 firebase_admin==6.5.0
 h5py==3.11.0
-hloc==1.5
 kagglehub==0.2.5
 kornia==0.7.2
 lightglue==0.0
