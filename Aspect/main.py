@@ -15,11 +15,11 @@ feat_map = {'LightGlue+Aliked':'aliked',
             'LightGlue+DISK':'disk', 
             'LightGlue+SIFT':'sift'}
 
-@st.cache_resource
-def initialize_firebase(creds_path, options):
-    creds = credentials.Certificate(creds_path)
-    firebase_admin.initialize_app(creds, options)
-    print('Firebase application initialized successfully!')
+# @st.cache_resource
+# def initialize_firebase(creds_path, options):
+#     creds = credentials.Certificate(creds_path)
+#     firebase_admin.initialize_app(creds, options)
+#     print('Firebase application initialized successfully!')
 
 class ProjectUtilities:
     def __init__(self, folder_name='recon', parent_dir='outputs'):
