@@ -163,7 +163,7 @@ class ImagePreviewComponent:
         st.subheader('Upload Images')
         with st.container(border = True):
             with st.form('uploader', clear_on_submit = True):
-                uploaded_images = st.file_uploader(label = 'Upload Images Here', 
+                uploaded_images = st.file_uploader(label = '---', 
                                                 accept_multiple_files = True,
                                                 type = self.file_formats)
                 clear = st.form_submit_button('Clear', use_container_width = True)
@@ -193,7 +193,7 @@ class ReconstructionComponent:
         st.subheader('Reconstruction')
         with st.container(border = True):
             rows = st.columns(2)
-            feature_matchers = rows[0].multiselect('Select Feature Matchers:',
+            feature_matchers = rows[0].multiselect('---',
                                                     list(feat_map.keys()),
                                                     ['LightGlue+Aliked'])
             rows[1].write('')
@@ -241,11 +241,11 @@ def initialize_app():
 def main():
     st.title('Structure-from-Motion with LightGlue')
     st.markdown("""
-    This application allows users to upload their own Structure-from-Motion (SfM) datasets and create 3D reconstructions using **LightGlue** and **LoFTR**.
+    This application allows users to upload their own Structure-from-Motion (SfM) datasets to create point-cloud reconstructions using **LightGlue**.
 
     **LightGlue**: A lightweight feature matcher known for its high accuracy and rapid inference. 
         LightGlue uses adaptive pruning techniques for both network width and depth, taking a set of keypoints and descriptors from each image and 
-        returning the indices of corresponding points.""")
+        returning the indices of corresponding points. [GitHub](https://github.com/cvg/LightGlue?tab=readme-ov-file)""")
 
     # initialize_app()
     # AuthPage = Page()
