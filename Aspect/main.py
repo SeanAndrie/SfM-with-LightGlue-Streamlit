@@ -161,20 +161,21 @@ class ImagePreviewComponent:
     def render(self):
         st.divider()      
         st.subheader('Upload Images')
+        uploaded_images = ''
         with st.container(border = True):
             with st.form('uploader', clear_on_submit = True):
                 uploaded_images = st.file_uploader(label = '---', 
                                                 accept_multiple_files = True,
                                                 type = self.file_formats)
-                clear = st.form_submit_button('Clear', use_container_width = True)
-                if clear:
-                    self.project.delete_image_folder()
+                save = st.form_submit_button('Upload Images', use_container_width = True)
+                if save:
+                    for img in uploaded_images:
+                        self.project.save_image(img)
 
             rows = st.columns(2)
             with rows[0]:
-                if st.button('Upload Images', use_container_width = True):
-                    for img in uploaded_images:
-                        self.project.save_image(img)
+                if st.button('Reset', use_container_width = True):
+                    self.project.delete_image_folder()
             
             with rows[1]:
                 preview_btn = st.button(f'Preview Images ({self.max_slots})', use_container_width = True)
