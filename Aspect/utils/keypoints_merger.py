@@ -2,7 +2,7 @@ import torch
 import numpy as np
 from collections import defaultdict
 from copy import deepcopy
-from fastprogress import progress_bar
+from tqdm import tqdm
 import h5py
 class KeypointsMerger:
     def __init__(self, feature_dir):
@@ -43,7 +43,7 @@ class KeypointsMerger:
 
         with h5py.File(f'{self.feature_dir}/merge_tmp.h5', mode='w') as f_match:
             counter = 0
-            for pair_idx in progress_bar(index_pairs):
+            for pair_idx in tqdm(index_pairs):
                 idx1, idx2 = pair_idx
                 fname1, fname2 = img_fnames[idx1], img_fnames[idx2]
                 key1, key2 = fname1.split('/')[-1], fname2.split('/')[-1]
