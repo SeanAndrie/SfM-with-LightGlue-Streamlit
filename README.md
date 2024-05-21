@@ -1,5 +1,5 @@
 # Structure-from-Motion with LightGlue
-This Python code provides a Streamlit application for performing Structure-from-Motion (SfM) reconstructions using the LightGlue feature matcher. The application allows users to upload their own image datasets, select feature matchers, and generate 3D point cloud reconstructions.
+This Github repository features the code for a Streamlit application for performing Structure-from-Motion (SfM) reconstructions using the LightGlue feature matcher. The application allows users to upload their own image datasets, select feature matchers, and generate 3D point cloud reconstructions.
 
 ## Deploy on Google Colab for GPU
 Structure-from-Motion is quite computationally intensive, and so, it is recommended that you leverage Google Colab's free GPU to boost the application. You can do this by:
