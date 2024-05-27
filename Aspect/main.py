@@ -203,32 +203,35 @@ class ReconstructionComponent:
             start_rec = st.button('Start Reconstruction', use_container_width = True)
         
         if start_rec:
-            if os.path.exists(st.session_state['project_path'] + '\images_rec'):
-                shutil.rmtree(st.session_state['project_path'] + '\images_rec')
-            
-            if os.path.exists('colmap_rec.zip'):
-                os.remove('colmap_rec.zip')
+            if not feature_matchers:
+                st.error('Please Select a Feature Matcher.')
+            else:
+                if os.path.exists(st.session_state['project_path'] + '\images_rec'):
+                    shutil.rmtree(st.session_state['project_path'] + '\images_rec')
+                
+                if os.path.exists('colmap_rec.zip'):
+                    os.remove('colmap_rec.zip')
 
-            pipe_manager = PipelineManager(img_dir = st.session_state['images_path'],
-                                            device = torch.device('cuda') if gpu else torch.device('cpu'))
+                pipe_manager = PipelineManager(img_dir = st.session_state['images_path'],
+                                                device = torch.device('cuda') if gpu else torch.device('cpu'))
 
-            for idx, fm in enumerate(feature_matchers):
-                pipe_manager.create_instance(instance_id = idx, 
-                                                model_name = feat_map[fm])
+                for idx, fm in enumerate(feature_matchers):
+                    pipe_manager.create_instance(instance_id = idx, 
+                                                    model_name = feat_map[fm])
+                
+                with st.status('Running Reconstruction'):
+                    self.rec, output_path = pipe_manager.run_reconstruction_for_all()
+                    self.rec_fig = viz_3d.init_figure(height = 500)
+                    viz_3d.plot_reconstruction(self.rec_fig, self.rec, cameras = False, 
+                                        color = 'rgba(227,168,30,0.5)', cs = 5)
+                st.plotly_chart(self.rec_fig)
             
-            with st.status('Running Reconstruction'):
-                self.rec, output_path = pipe_manager.run_reconstruction_for_all()
-                self.rec_fig = viz_3d.init_figure(height = 500)
-                viz_3d.plot_reconstruction(self.rec_fig, self.rec, cameras = False, 
-                                    color = 'rgba(227,168,30,0.5)', cs = 5)
-            st.plotly_chart(self.rec_fig)
-        
-            shutil.make_archive('colmap_rec', 'zip', output_path)
-            download_btn = st.download_button(label = 'Download Reconstruction Zip File',
-                                    data = open('colmap_rec.zip', 'rb'), 
-                                    file_name = 'colmap_rec.zip', 
-                                    mime = 'application/zip', 
-                                    use_container_width = True)
+                shutil.make_archive('colmap_rec', 'zip', output_path)
+                download_btn = st.download_button(label = 'Download Reconstruction Zip File',
+                                        data = open('colmap_rec.zip', 'rb'), 
+                                        file_name = 'colmap_rec.zip', 
+                                        mime = 'application/zip', 
+                                        use_container_width = True)
 def initialize_app():
     initialize_firebase(**config)
 
