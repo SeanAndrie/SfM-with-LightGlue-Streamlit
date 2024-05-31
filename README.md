@@ -1,5 +1,5 @@
 # Structure-from-Motion with LightGlue
-This Github repository features the code for a Streamlit application for performing Structure-from-Motion (SfM) reconstructions using the LightGlue feature matcher. The application allows users to upload their own image datasets, select feature matchers, and generate 3D point cloud reconstructions. 
+This Github repository features the code for a Streamlit application for performing Structure-from-Motion (SfM) reconstructions using the LightGlue feature extractor. The application allows users to upload their own image datasets, select feature matchers, and generate 3D point cloud reconstructions. 
 
 For more information on LightGlue, please refer to their [GitHub](https://github.com/cvg/LightGlue?tab=readme-ov-file) page. 
 
