@@ -144,12 +144,6 @@ class ReconstructionComponent:
                                         file_name = 'colmap_rec.zip', 
                                         mime = 'application/zip', 
                                         use_container_width = True)
-def initialize_app():
-    if 'user' not in st.session_state and \
-        'user_id' not in st.session_state:
-
-        st.session_state['user'] = None
-        st.session_state['user_id'] = None
 
 def main():
     st.title('Structure-from-Motion with LightGlue')
