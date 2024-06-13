@@ -160,23 +160,11 @@ def main():
         LightGlue uses adaptive pruning techniques for both network width and depth, taking a set of keypoints and descriptors from each image and 
         returning the indices of corresponding points. [GitHub](https://github.com/cvg/LightGlue?tab=readme-ov-file)""")
 
-    # initialize_app()
-    # AuthPage = Page()
     SfMPage = Page()
 
-    # userauth = UserAuthenticationComponent()
-    # AuthPage.add_component('Authentication', userauth)
-
-    # if st.session_state['user']:
     project = ProjectUtilities()
-    # SfMPage.add_component('SfM', AccountInfoComponent())
     SfMPage.add_component('ImagePreview', ImagePreviewComponent(project = project))
     SfMPage.add_component('Reconstruction', ReconstructionComponent())
-
-    # if st.session_state['user']:
-    #     SfMPage.render()
-    # else:
-    #     AuthPage.render()
 
     SfMPage.render()
 
