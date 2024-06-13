@@ -5,8 +5,6 @@ import shutil
 import streamlit as st
 
 from hloc.utils import viz_3d
-import firebase_admin
-from firebase_admin import credentials, auth
 from utils.sfm_pipeline import PipelineManager
 
 feat_map = {'LightGlue+Aliked':'aliked',
@@ -14,12 +12,6 @@ feat_map = {'LightGlue+Aliked':'aliked',
             'LightGlue+DoGHardNet':'doghardnet',
             'LightGlue+DISK':'disk', 
             'LightGlue+SIFT':'sift'}
-
-# @st.cache_resource
-# def initialize_firebase(creds_path, options):
-#     creds = credentials.Certificate(creds_path)
-#     firebase_admin.initialize_app(creds, options)
-#     print('Firebase application initialized successfully!')
 
 class ProjectUtilities:
     def __init__(self, folder_name='recon', parent_dir='outputs'):
@@ -68,86 +60,6 @@ class Page:
     def render(self):
         for id, component in self.components.items():
             component.render()
-
-# class UserAuthenticationComponent:
-#     def __init__(self):
-#         self.email = ''
-#         self.user = ''
-#         self.password = ''
-
-#     def validate_email(self, email):
-#         regex = '^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
-#         return re.match(regex, email)
-
-#     def check_fields(self, email, password):
-#         if email == '' or password == '':
-#             st.error('Email or password is missing.')
-#             return False
-        
-#         if not self.validate_email(email):
-#             st.error('Invalid Email Address.')
-#             return False
-        
-#         return True
-
-#     def login(self):
-#         try:
-#             self.user = auth.get_user_by_email(self.email) 
-#             st.session_state['user'] = self.user.email
-#             st.session_state['user_id'] = self.user.uid
-
-#             st.success(f'Logged in successfully.')
-#         except auth.UserNotFoundError:
-#             st.error('User not found. Select "Register" option from the dropdown to create a new account.')
-#         except Exception as e:
-#             st.error(f'Error: {e}')
-    
-#     def register(self):
-#         try:
-#             auth.create_user(email = self.email, password = self.password)
-#             st.success('Registered successfully! Please log in.')
-#         except Exception as e:
-#             st.error(f'Error: {e}')
-    
-#     def render(self):
-#         st.divider()
-#         option = st.selectbox('Login or Register', ['Login', 'Register'])
-#         if option == 'Login':
-#             with st.form(key = option):
-#                 self.email = st.text_input('Email')
-#                 self.password = st.text_input('Password', type = 'password')
-#                 submit = st.form_submit_button(label = 'Log In')
-        
-#                 if submit:
-#                     if self.check_fields(self.email, self.password):
-#                         self.login()
-
-#         if option == 'Register':
-#             with st.form(key = option):
-#                 self.email = st.text_input('Email')
-#                 self.password = st.text_input('Password', type = 'password')
-#                 submit = st.form_submit_button(label = 'Create account')
-
-#                 if submit:
-#                     if self.check_fields(self.email, self.password):
-#                         self.register()    
-
-# class AccountInfoComponent:
-#     def render(self):
-#         st.divider()
-#         st.subheader('Account Information')
-#         with st.container(border = True):
-#             first_row, second_row = st.columns(2), st.columns(2)
-#             first_row[0].container().write(f"Logged in as \n\n > 🟢 **{st.session_state['user']}**")
-#             first_row[1].container().write(f"User ID\n\n > {st.session_state['user_id']}")
-
-#             with second_row[0].container():
-#                 if st.button('Logout', use_container_width = True):
-#                     st.session_state['user'] = None
-#                     st.success('Logged out successfully')
-            
-#             with second_row[1].container():
-#                 st.button('Upgrade', use_container_width = True, disabled = True)
 
 class ImagePreviewComponent:
     def __init__(self, project:ProjectUtilities, max_slots = 5, file_formats = ['jpg', 'png', 'jpeg']):
@@ -233,8 +145,6 @@ class ReconstructionComponent:
                                         mime = 'application/zip', 
                                         use_container_width = True)
 def initialize_app():
-    initialize_firebase(**config)
-
     if 'user' not in st.session_state and \
         'user_id' not in st.session_state:
 
