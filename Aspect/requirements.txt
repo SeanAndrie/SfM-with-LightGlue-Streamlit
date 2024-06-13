@@ -1,14 +1,12 @@
-fastprogress==1.0.3
 h5py==3.11.0
-hloc==1.5
+hloc @ git+https://github.com/cvg/Hierarchical-Localization
 kagglehub==0.2.6
 kornia==0.7.2
-lightglue==0.0
+lightglue @ git+https://github.com/cvg/LightGlue
 numpy==1.26.4
-opencv_python==4.9.0.80
 Pillow==10.3.0
 pycolmap==0.6.1
 streamlit==1.35.0
 timm==1.0.3
-torch==2.3.0+cu118
+torch==2.3.1+cu121
 tqdm==4.66.4

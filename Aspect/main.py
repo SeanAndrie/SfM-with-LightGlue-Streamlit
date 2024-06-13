@@ -1,5 +1,4 @@
 import os
-import re
 import torch
 import shutil
 import streamlit as st
@@ -62,7 +61,7 @@ class Page:
             component.render()
 
 class ImagePreviewComponent:
-    def __init__(self, project:ProjectUtilities, max_slots = 5, file_formats = ['jpg', 'png', 'jpeg']):
+    def __init__(self, project: ProjectUtilities, max_slots=5, file_formats=['jpg', 'png', 'jpeg']):
         self.project = project
         self.max_slots = max_slots
         self.file_formats = file_formats
@@ -71,79 +70,89 @@ class ImagePreviewComponent:
             st.session_state['images'] = []
 
     def render(self):
-        st.divider()      
+        st.divider()
         st.subheader('Upload Images')
-        uploaded_images = ''
-        with st.container(border = True):
-            with st.form('uploader', clear_on_submit = True):
-                uploaded_images = st.file_uploader(label = '---', 
-                                                accept_multiple_files = True,
-                                                type = self.file_formats)
-                save = st.form_submit_button('Upload Images', use_container_width = True)
+        uploaded_images = st.file_uploader(label='---', accept_multiple_files=True, type=self.file_formats)
+        
+        if uploaded_images:
+            st.session_state['images'] = uploaded_images
+        
+        with st.container():
+            with st.form('uploader', clear_on_submit=True):
+                save = st.form_submit_button('Upload Images', use_container_width=True)
                 if save:
-                    for img in uploaded_images:
+                    for img in st.session_state['images']:
                         self.project.save_image(img)
 
             rows = st.columns(2)
             with rows[0]:
-                if st.button('Reset', use_container_width = True):
+                if st.button('Reset', use_container_width=True):
                     self.project.delete_image_folder()
+                    st.session_state['images'] = []
             
             with rows[1]:
-                preview_btn = st.button(f'Preview Images ({self.max_slots})', use_container_width = True)
+                preview_btn = st.button(f'Preview Images ({self.max_slots})', use_container_width=True)
+            
             if preview_btn:
-                n_slots = len(uploaded_images) if len(uploaded_images) < self.max_slots else self.max_slots
+                n_slots = len(st.session_state['images']) if len(st.session_state['images']) < self.max_slots else self.max_slots
                 img_slots = st.columns(n_slots)
-                for idx, image in enumerate(uploaded_images[:n_slots]):
+                for idx, image in enumerate(st.session_state['images'][:n_slots]):
                     img_slots[idx].image(image)
+
 
 class ReconstructionComponent:
     def __init__(self):
         self.rec = ''
         self.rec_fig = ''
+        
     def render(self):
         st.divider()
         st.subheader('Generate Reconstruction')
-        with st.container(border = True):
+        with st.container():
             rows = st.columns(2)
-            feature_matchers = rows[0].multiselect('---',
-                                                    list(feat_map.keys()),
-                                                    ['LightGlue+Aliked'])
+            feature_matchers = rows[0].multiselect('---', list(feat_map.keys()), ['LightGlue+Aliked'])
             rows[1].write('')
             rows[1].write('')
-            gpu = rows[1].toggle('Enable GPU')
-            start_rec = st.button('Start Reconstruction', use_container_width = True)
-        
+            gpu = rows[1].checkbox('Enable GPU')
+            start_rec = st.button('Start Reconstruction', use_container_width=True)
+
         if start_rec:
             if not feature_matchers:
                 st.error('Please Select a Feature Matcher.')
             else:
-                if os.path.exists(st.session_state['project_path'] + '\images_rec'):
-                    shutil.rmtree(st.session_state['project_path'] + '\images_rec')
-                
+                if os.path.exists(st.session_state['project_path'] + '/images_rec'):
+                    shutil.rmtree(st.session_state['project_path'] + '/images_rec')
+
                 if os.path.exists('colmap_rec.zip'):
                     os.remove('colmap_rec.zip')
 
-                pipe_manager = PipelineManager(img_dir = st.session_state['images_path'],
-                                                device = torch.device('cuda') if gpu else torch.device('cpu'))
+                try:
+                    device = torch.device('cuda') if gpu else torch.device('cpu')
+                    pipe_manager = PipelineManager(img_dir=st.session_state['images_path'], device=device)
+                except Exception as e:
+                    st.error(f'Error initializing PipelineManager: {e}')
+                    return
 
-                for idx, fm in enumerate(feature_matchers):
-                    pipe_manager.create_instance(instance_id = idx, 
-                                                    model_name = feat_map[fm])
-                
-                with st.status('Running Reconstruction'):
-                    self.rec, output_path = pipe_manager.run_reconstruction_for_all()
-                    self.rec_fig = viz_3d.init_figure(height = 500)
-                    viz_3d.plot_reconstruction(self.rec_fig, self.rec, cameras = False, 
-                                        color = 'rgba(227,168,30,0.5)', cs = 5)
-                st.plotly_chart(self.rec_fig)
-            
-                shutil.make_archive('colmap_rec', 'zip', output_path)
-                download_btn = st.download_button(label = 'Download Reconstruction Zip File',
-                                        data = open('colmap_rec.zip', 'rb'), 
-                                        file_name = 'colmap_rec.zip', 
-                                        mime = 'application/zip', 
-                                        use_container_width = True)
+                try:
+                    for idx, fm in enumerate(feature_matchers):
+                        pipe_manager.create_instance(instance_id=idx, model_name=feat_map[fm])
+                        
+                    with st.spinner('Running Reconstruction'):
+                        self.rec, output_path = pipe_manager.run_reconstruction_for_all()
+                        self.rec_fig = viz_3d.init_figure(height=500)
+                        viz_3d.plot_reconstruction(self.rec_fig, self.rec, cameras=False, color='rgba(227,168,30,0.5)', cs=5)
+                    st.plotly_chart(self.rec_fig)
+                except Exception as e:
+                    st.error(f'Error during reconstruction: {e}')
+                    return
+
+                try:
+                    shutil.make_archive('colmap_rec', 'zip', output_path)
+                    with open('colmap_rec.zip', 'rb') as f:
+                        st.download_button(label='Download Reconstruction Zip File', data=f, file_name='colmap_rec.zip', mime='application/zip', use_container_width=True)
+                except Exception as e:
+                    st.error(f'Error creating zip file: {e}')
+
 
 def main():
     st.title('Structure-from-Motion with LightGlue')

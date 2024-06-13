@@ -1,5 +1,5 @@
 from .image_pairs import ImagePairsFinder
-from .feature_matchers import LightGlueFeatureMatcher, LoFTRFeatureMatcher
+from .feature_matchers import LightGlueFeatureMatcher
 from .keypoints_merger import KeypointsMerger
 from pathlib import Path
 from .database import *
@@ -38,10 +38,6 @@ class SfMPipeline:
             feat_matcher = LightGlueFeatureMatcher(model_name=self.model_name,
                                                    feature_dir=self.feature_dir,
                                                    device=self.device)
-        # elif self.model_name == 'loftr':
-        #     feat_matcher = LoFTRFeatureMatcher(pretrained=self.pretrained, 
-        #                                        feature_dir=self.feature_dir,
-        #                                        device=self.device)
         
         feat_matcher.detect_and_match(img_fnames=self.img_fnames_str, 
                                       index_pairs=index_pairs)
@@ -142,9 +138,9 @@ class PipelineManager:
 
         return reconstruction, output_path
     
-# if __name__ == '__main__':
-#     manager = PipelineManager(img_dir = 'SfM-Datasets/beethoven_converted', 
-#                               device = torch.device('cuda'))
-#     manager.create_instance(instance_id = 'aliked-default')
-#     manager.create_instance(instance_id = 'superpoint', model_name = 'superpoint')
-#     manager.run_reconstruction_for_all()
+if __name__ == '__main__':
+    manager = PipelineManager(img_dir = 'SfM-Datasets/beethoven_converted', 
+                              device = torch.device('cuda'))
+    manager.create_instance(instance_id = 'aliked-default')
+    manager.create_instance(instance_id = 'superpoint', model_name = 'superpoint')
+    manager.run_reconstruction_for_all()

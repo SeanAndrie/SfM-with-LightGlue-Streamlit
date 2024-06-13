@@ -1,5 +1,5 @@
-from image_pairs import ImagePairsFinder
-from feature_matchers import LightGlueFeatureMatcher, LoFTRFeatureMatcher
+from .image_pairs import ImagePairsFinder
+from .feature_matchers import LightGlueFeatureMatcher
 
 from pathlib import Path
 import os

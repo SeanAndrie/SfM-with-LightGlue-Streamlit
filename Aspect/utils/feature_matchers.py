@@ -1,4 +1,3 @@
-from fastprogress import progress_bar
 import torch
 import h5py
 from tqdm import tqdm
@@ -7,9 +6,8 @@ import kornia as K
 import kornia.feature as KF
 import os
 import gc
-import cv2
 
-from time import time, sleep
+from time import time
 from lightglue import ALIKED, SuperPoint, DoGHardNet, DISK, SIFT
 
 class LightGlueFeatureMatcher:
